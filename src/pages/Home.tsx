@@ -51,7 +51,7 @@ const CONFIG_URL =
   "https://raw.githubusercontent.com/ResilientApp/l-store-config/refs/heads/main/milestones.json"
 
 // We'll still reference the same BACKEND_URL from your .env
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:7200"
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "/api"
 
 // ====================== HELPER FUNCTIONS ======================
 function trackSubmission() {

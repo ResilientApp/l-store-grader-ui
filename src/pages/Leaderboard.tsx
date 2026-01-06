@@ -43,7 +43,7 @@ const CONFIG_URL =
   "https://raw.githubusercontent.com/ResilientApp/l-store-config/refs/heads/main/milestones.json"
 
 // Env-based constants
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:7200"
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "/api"
 const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || "http://localhost:5173"
 
 interface LeaderboardEntry {

@@ -28,7 +28,7 @@ import {
 } from "lucide-react"
 import { Card, CardContent } from "../components/ui/card"
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:7200"
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "/api"
 
 function renderTestIcon(passed: boolean) {
   return passed ? (

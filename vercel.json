@@ -3,7 +3,7 @@
       { "source": "/results/:transaction_id", "destination": "/index.html" },
       { "source": "/leaderboard", "destination": "/index.html" },
       { "source": "/results", "destination": "/index.html" },
-      { "source": "/(.*)", "destination": "/index.html" }
+      { "source": "/(.*)", "destination": "/index.html" },
+      { "source": "/api/:path*", "destination": "http://44.193.63.142:7200/:path*" }
     ]
 }
-  
