@@ -251,7 +251,7 @@ export function Home() {
   }
 
   // 11) Contribution Graph
-  const [selectedYear, setSelectedYear] = useState("2025")
+  const [selectedYear, setSelectedYear] = useState("2026")
 
   function isSubmissionDay(date: Date | null) {
     if (!date) return false
@@ -483,16 +483,10 @@ export function Home() {
                   </CardTitle>
                   <TabsList className="bg-neutral-800 border border-neutral-700 text-sm rounded">
                     <TabsTrigger
-                      value="2024"
+                      value="2026"
                       className="data-[state=active]:bg-violet-600 data-[state=active]:text-white"
                     >
-                      2024
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="2025"
-                      className="data-[state=active]:bg-violet-600 data-[state=active]:text-white"
-                    >
-                      2025
+                      2026
                     </TabsTrigger>
                   </TabsList>
                 </CardHeader>
@@ -500,14 +494,9 @@ export function Home() {
                   <p className="text-sm text-neutral-400 mb-4 text-center">
                     Visual representation of your daily evaluations.
                   </p>
-                  <TabsContent value="2024">
+                  <TabsContent value="2026">
                     <div className="overflow-x-auto flex justify-center">
-                      {renderContributionGraph("2024")}
-                    </div>
-                  </TabsContent>
-                  <TabsContent value="2025">
-                    <div className="overflow-x-auto flex justify-center">
-                      {renderContributionGraph("2025")}
+                      {renderContributionGraph("2026")}
                     </div>
                   </TabsContent>
                 </CardContent>
