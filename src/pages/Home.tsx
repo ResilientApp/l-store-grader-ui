@@ -186,9 +186,9 @@ export function Home() {
     setShowLoader(true)
     const formData = new FormData()
     formData.append("milestone", milestone1)
-    formData.append("extended", extended1 ? "true" : "false")
+    formData.append("extended", extended1 ? "1" : "0")
     formData.append("github_repo", repoUrl)
-    formData.append("ai", aiMode ? "true" : "false")
+    formData.append("ai", aiMode ? "1" : "0")
     if (timeout) formData.append("timeout", timeout.toString())
 
     try {
@@ -221,8 +221,8 @@ export function Home() {
     const formData = new FormData()
     formData.append("file", file)
     formData.append("milestone", milestone2)
-    formData.append("extended", extended2 ? "true" : "false")
-    formData.append("ai", aiMode ? "true" : "false")
+    formData.append("extended", extended2 ? "1" : "0")
+    formData.append("ai", aiMode ? "1" : "0")
     if (timeout) formData.append("timeout", timeout.toString())
 
     try {
