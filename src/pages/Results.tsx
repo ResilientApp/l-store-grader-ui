@@ -61,13 +61,18 @@ function renderTotalTimeBadge(totalSeconds: number) {
   )
 }
 
-function PerformanceBars({ performance }: { performance: any }) {
-  // If performance is empty/null, bail out
+function PerformanceBars({ 
+  performance, 
+  total_time 
+}: { 
+  performance: any; 
+  total_time?: number 
+}) {
   const metrics = Object.entries(performance ?? {}).filter(
     ([k]) => k !== "total_time"
   )
 
-  if (!metrics.length) {
+  if (!metrics.length && total_time === undefined) {
     return <p className="text-sm text-neutral-400">No performance data.</p>
   }
 
@@ -112,6 +117,30 @@ function PerformanceBars({ performance }: { performance: any }) {
           </div>
         )
       })}
+
+      {total_time !== undefined && (
+        <div className="text-sm pt-3 mt-3 border-t border-neutral-800">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-neutral-200 font-medium">Subprocess Total Time</span>
+            <span className="text-neutral-400">{total_time} s</span>
+          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="w-full h-3 bg-neutral-800 rounded relative cursor-pointer overflow-hidden">
+                <div
+                  className="h-3 bg-blue-600 transition-all duration-150"
+                  style={{ width: `100%` }} 
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-sm">
+                Subprocess Total Time: {total_time} s
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      )}
     </div>
   )
 }
@@ -300,6 +329,7 @@ export function Results() {
   const performance = performance_results || {}
   const aiTestsData = ai_tests || {}
   const shareUrl = shareLink || (typeof window !== "undefined" ? window.location.href : "")
+  const total_time = subprocess_total_time || 0
 
   // Convert your tests object to an array for the Accordion
   const testcases = tests
@@ -391,7 +421,7 @@ export function Results() {
             <div className="flex items-center justify-center mb-4">
               {renderTotalTimeBadge(totalExecTime)}
             </div>
-            <PerformanceBars performance={performance} />
+            <PerformanceBars performance={performance} total_time={total_time}/>
           </CardContent>
         </Card>
       </div>
