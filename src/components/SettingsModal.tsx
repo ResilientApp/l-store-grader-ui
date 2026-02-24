@@ -65,6 +65,7 @@ export function SettingsModal({
               <SelectItem value="2">2 minutes</SelectItem>
               <SelectItem value="5">5 minutes</SelectItem>
               <SelectItem value="10">10 minutes</SelectItem>
+              <SelectItem value="20">20 minutes</SelectItem>
             </SelectContent>
           </Select>
         </div>
