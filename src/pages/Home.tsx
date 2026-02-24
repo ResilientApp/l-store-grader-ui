@@ -99,6 +99,46 @@ export function Home() {
   // 1) Load Milestone Config from GitHub
   const [milestones, setMilestones] = useState<any[]>([])
   const [loadingConfig, setLoadingConfig] = useState(true)
+  const [loaderText, setLoaderText] = useState("Evaluating...")
+  const pollCancelRef = useRef<(() => void) | null>(null)
+
+  useEffect(() => {
+    return () => pollCancelRef.current?.()
+  }, [])
+
+  async function pollJobUntilDone(jobId: string) {
+    let cancelled = false
+    pollCancelRef.current = () => {
+      cancelled = true
+    }
+
+    while (!cancelled) {
+      // Poll the backend status
+      const res = await axios.get(`${BACKEND_URL}/jobs/${jobId}`)
+      const data = res.data as {
+        job_id: string
+        status: "queued" | "running" | "done" | "error"
+        tx_id?: string
+        error?: string
+      }
+
+      if (data.status === "queued") {
+        setLoaderText("Queued...")
+      } else if (data.status === "running") {
+        setLoaderText("Running tests...")
+      } else if (data.status === "done") {
+        if (!data.tx_id) throw new Error("Job done but missing tx_id")
+        return data.tx_id
+      } else if (data.status === "error") {
+        throw new Error(data.error || "Job failed")
+      }
+
+      // Check every 10s
+      await new Promise((r) => setTimeout(r, 10000))
+    }
+
+    throw new Error("Polling cancelled")
+  }
 
   useEffect(() => {
     fetch(CONFIG_URL)
@@ -192,16 +232,20 @@ export function Home() {
     if (timeout) formData.append("timeout", timeout.toString())
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/results`, formData)
-      const data = response.data
-      console.log("Evaluation response:", data)
+      console.log("BACKEND_URL =", BACKEND_URL, "POST =", `${BACKEND_URL}/results`)
+      // POST only return the job_id
+      const resp = await axios.post(`${BACKEND_URL}/results`, formData)
+      const jobId = resp.data?.job_id
+      if (!jobId) throw new Error("Missing job_id from /results")
+
+      const tx_id = await pollJobUntilDone(jobId)
+
       trackSubmission()
       reloadSubmissions()
-
-      const tx_id = data.resilientdb_tx_id || "unknown"
       navigate(`/results/${tx_id}`)
     } catch (err) {
       console.error("Evaluation error:", err)
+      alert((err as any)?.message || "Evaluation failed")
     } finally {
       setShowLoader(false)
     }
@@ -226,7 +270,8 @@ export function Home() {
     if (timeout) formData.append("timeout", timeout.toString())
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/results`, formData, {
+      console.log("BACKEND_URL =", BACKEND_URL, "POST =", `${BACKEND_URL}/results`)
+      const resp = await axios.post(`${BACKEND_URL}/results`, formData, {
         onUploadProgress: (p) => {
           if (p.total) {
             const pc = Math.round((p.loaded * 100) / p.total)
@@ -234,17 +279,21 @@ export function Home() {
           }
         }
       })
-      const data = response.data
-      console.log("Evaluation response:", data)
+
       setIsUploading(false)
+
+      const jobId = resp.data?.job_id
+      if (!jobId) throw new Error("Missing job_id from /results")
+
+      const tx_id = await pollJobUntilDone(jobId)
+
       trackSubmission()
       reloadSubmissions()
-
-      const tx_id = data.resilientdb_tx_id || "unknown"
       navigate(`/results/${tx_id}`)
     } catch (err) {
       console.error("Upload error:", err)
       setIsUploading(false)
+      alert((err as any)?.message || "Upload/evaluation failed")
     } finally {
       setShowLoader(false)
     }
@@ -306,7 +355,7 @@ export function Home() {
   return (
     <Layout>
       {/* 1) Show loader if something is in progress */}
-      <Loader show={showLoader} text="Evaluating..." />
+      <Loader show={showLoader} text={loaderText} />
 
       {/* 2) If still loading config, show a placeholder */}
       {loadingConfig ? (
