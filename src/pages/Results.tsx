@@ -52,7 +52,7 @@ function renderTotalTimeBadge(totalSeconds: number) {
     label = "Needs Optimization"
     colorClass = "bg-orange-600"
   } else {
-    label = "Severe Optimization"
+    label = "Need Severe Optimization"
     colorClass = "bg-red-600"
   }
 
